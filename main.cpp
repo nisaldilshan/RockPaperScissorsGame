@@ -9,6 +9,7 @@ public:
     void setup();
     void run();
     void exit();
+
 private:
     std::unique_ptr<Player> player1;
     std::unique_ptr<Player> player2;
@@ -47,5 +48,7 @@ void Game::run()
 int main()
 {
     std::unique_ptr<Game> game = std::make_unique<Game>();
+    game->setup();
+    game->run();
     return 0;
 }
