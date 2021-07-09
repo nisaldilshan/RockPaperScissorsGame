@@ -27,11 +27,14 @@ public:
     void exit();
 
 private:
+    void runHost();
+    void runJoinee();
     std::unique_ptr<Player> player1;
     std::unique_ptr<Player> player2;
     bool m_running = true;
     std::list<ScoreEntry> scores;
     bool m_isSinglePlayer = true;
+    bool m_isHost = true;
 };
 
 Game::Game(/* args */)
@@ -51,12 +54,27 @@ void Game::setup()
     }
     else
     {
-        player1 = std::make_unique<HumanPlayer>(true);
-        player2 = std::make_unique<HumanPlayer>(false);
+        if (m_isHost)
+        {
+            player1 = std::make_unique<HumanPlayer>(true);
+            player2 = std::make_unique<HumanPlayer>(false);
+        }
+        else
+        {
+            player1 = std::make_unique<HumanPlayer>();
+        }
     }
 }
 
 void Game::run() 
+{
+    if (m_isHost)
+        runHost();
+    else
+        runJoinee();
+}
+
+void Game::runHost() 
 {
     while (m_running)
     {
@@ -89,6 +107,28 @@ void Game::run()
     {
         std::cout << "Round" << round++ << " : " << (score.res == RoundResult::Draw ? "Draw" : score.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
     }
+}
+
+void Game::runJoinee() 
+{
+    // create client here
+
+    while (m_running)
+    {
+        ScoreEntry se;
+        se.playerOneInput = player1->play();
+        // client.send();
+
+        m_running = player1->wantToPlayAgain();
+        // client.send();
+
+        // wait for ack
+
+        // display round winner
+    }
+
+    // wait for server to send summary and display summary
+    // destroy client
 }
 
 

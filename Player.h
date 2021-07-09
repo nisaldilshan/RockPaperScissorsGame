@@ -20,7 +20,6 @@ private:
     bool m_playAgain = true;
     virtual Gesture getInput() = 0;
     virtual bool getPlayAgainInput() = 0;
-    //void validateInput();
     void processInput(Gesture input);
 };
 

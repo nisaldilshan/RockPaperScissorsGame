@@ -11,6 +11,8 @@ class Server
 public:
     Server(/* args */);
     ~Server();
+    int getData(char * buffer, int length);
+    void sendData(char * buffer, int length);
 private:
     SOCKET m_clientSocket = INVALID_SOCKET;
 };
@@ -89,52 +91,8 @@ Server::Server(/* args */)
     constexpr int DEFAULT_BUFLEN = 512;
 
     char recvbuf[DEFAULT_BUFLEN];
-    int iSendResult;
     int recvbuflen = DEFAULT_BUFLEN;
 
-    // Receive until the peer shuts down the connection
-    do {
-
-        iResult = recv(m_clientSocket, recvbuf, recvbuflen, 0);
-        if (iResult > 0) {
-            printf("Bytes received: %d\n", iResult);
-
-            // Echo the buffer back to the sender
-            iSendResult = send(m_clientSocket, recvbuf, iResult, 0);
-            if (iSendResult == SOCKET_ERROR) {
-                printf("send failed: %d\n", WSAGetLastError());
-                closesocket(m_clientSocket);
-                WSACleanup();
-                break;
-                //return 1;
-            }
-            printf("Bytes sent: %d\n", iSendResult);
-        } else if (iResult == 0)
-            printf("Connection closing...\n");
-        else {
-            printf("recv failed: %d\n", WSAGetLastError());
-            closesocket(m_clientSocket);
-            WSACleanup();
-            break;
-            //return 1;
-        }
-
-    } while (iResult > 0);
-
 }
 
-Server::~Server()
-{
-    // shutdown the connection since we're done
-    int iResult = shutdown(m_clientSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(m_clientSocket);
-        WSACleanup();
-        //return 1;
-    }
 
-    // cleanup
-    closesocket(m_clientSocket);
-    WSACleanup();
-}
