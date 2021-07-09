@@ -31,6 +31,7 @@ private:
     std::unique_ptr<Player> player2;
     bool m_running = true;
     std::list<ScoreEntry> scores;
+    bool m_isSinglePlayer = true;
 };
 
 Game::Game(/* args */)
@@ -43,10 +44,15 @@ Game::~Game()
 
 void Game::setup() 
 {
-    //if (singleplayer)
+    if (m_isSinglePlayer)
     {
         player1 = std::make_unique<HumanPlayer>();
         player2 = std::make_unique<ComputerPlayer>();
+    }
+    else
+    {
+        player1 = std::make_unique<HumanPlayer>(true);
+        player2 = std::make_unique<HumanPlayer>(false);
     }
 }
 

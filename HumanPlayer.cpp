@@ -1,15 +1,7 @@
 #include "Player.h"
 #include <iostream>
 
-HumanPlayer::HumanPlayer(/* args */)
-{
-}
-
-HumanPlayer::~HumanPlayer()
-{
-}
-
-Gesture HumanPlayer::getInput() 
+Gesture getLocalInput()
 {
     std::cout << "Enter your choice, \n1.Rock, 2.Paper, 3.Scissors : ";
     int inputGesture;
@@ -23,7 +15,7 @@ Gesture HumanPlayer::getInput()
     return static_cast<Gesture>(inputGesture);
 }
 
-bool HumanPlayer::getPlayAgainInput() 
+bool getLocalPlayAgainInput()
 {
     std::cout << "Do you want to play another round ? (Y/N) : ";
     char in;
@@ -35,5 +27,42 @@ bool HumanPlayer::getPlayAgainInput()
     }
 
     return in == 'Y' || in == 'y';
+}
 
+Gesture getNetworkInput()
+{
+    return Gesture::None;
+}
+
+bool getNetworkPlayAgainInput()
+{
+    return true;
+}
+
+HumanPlayer::HumanPlayer(bool isLocal)
+{
+    if (isLocal)
+    {
+        m_getInputFunc = std::bind(getLocalInput);
+        m_getPlayAgainInputFunc = std::bind(getLocalPlayAgainInput);
+    }
+    else
+    {
+        m_getInputFunc = std::bind(getNetworkInput);
+        m_getPlayAgainInputFunc = std::bind(getNetworkPlayAgainInput);
+    }
+}
+
+HumanPlayer::~HumanPlayer()
+{
+}
+
+Gesture HumanPlayer::getInput() 
+{
+    return m_getInputFunc();
+}
+
+bool HumanPlayer::getPlayAgainInput() 
+{
+    return m_getPlayAgainInputFunc();
 }

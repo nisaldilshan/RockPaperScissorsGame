@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 
 enum class Gesture { 
     Rock, 
@@ -40,11 +41,13 @@ private:
 class HumanPlayer : public Player
 {
 public:
-    HumanPlayer(/* args */);
+    HumanPlayer(bool isLocal = true);
     ~HumanPlayer();
 private:
     virtual Gesture getInput();
     virtual bool getPlayAgainInput();
+    std::function<Gesture()> m_getInputFunc;
+    std::function<bool()> m_getPlayAgainInputFunc;
 };
 
 
