@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <memory>
 #include <iostream>
+#include <list>
 
 enum class RoundResult { 
     PlayerOneWins, 
@@ -29,6 +30,7 @@ private:
     std::unique_ptr<Player> player1;
     std::unique_ptr<Player> player2;
     bool m_running = true;
+    std::list<ScoreEntry> scores;
 };
 
 Game::Game(/* args */)
@@ -68,6 +70,7 @@ void Game::run()
                 se.res = RoundResult::PlayerOneWins;
         }
 
+        scores.push_back(se);
         std::cout << (se.res == RoundResult::Draw ? "Draw" : se.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
 
 
@@ -75,6 +78,11 @@ void Game::run()
     }
 
     // send summary to both players
+    int round = 1;
+    for (auto score : scores)
+    {
+        std::cout << "Round" << round++ << " : " << (score.res == RoundResult::Draw ? "Draw" : score.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
+    }
 }
 
 
