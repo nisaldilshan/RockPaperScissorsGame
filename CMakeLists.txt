@@ -6,4 +6,6 @@ add_executable(game main.cpp
                     Player.cpp 
                     HumanPlayer.cpp 
                     ComputerPlayer.cpp
+                    Server.cpp
+                    Client.cpp
                 )
