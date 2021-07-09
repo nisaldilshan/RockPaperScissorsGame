@@ -8,15 +8,21 @@ Player::~Player()
 {
 }
 
-void Player::play() 
+Gesture Player::play() 
 {
-    getInput();
+    Gesture in = getInput();
     m_playAgain = getPlayAgainInput();
+    return in;
 }
 
 bool Player::wantToPlayAgain() 
 {
     return m_playAgain;
+}
+
+void Player::processInput(Gesture input) 
+{
+    
 }
 
 

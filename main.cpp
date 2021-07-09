@@ -1,5 +1,20 @@
 #include "Player.h"
 #include <memory>
+#include <iostream>
+
+enum class RoundResult { 
+    PlayerOneWins, 
+    PlayerTwoWins,
+    Draw
+}; 
+
+struct ScoreEntry
+{
+    Gesture playerOneInput;
+    Gesture playerTwoInput;
+    RoundResult res;
+};
+
 
 class Game
 {
@@ -37,10 +52,29 @@ void Game::run()
 {
     while (m_running)
     {
-        player1->play();
-        player2->play();
+        ScoreEntry se;
+        se.playerOneInput = player1->play();
+        se.playerTwoInput = player2->play();
+        
+        if (se.playerOneInput == se.playerTwoInput)
+            se.res = RoundResult::Draw;
+        else
+        {
+            if (se.playerOneInput == Gesture::Rock && se.playerTwoInput == Gesture::Paper || 
+            se.playerOneInput == Gesture::Paper && se.playerTwoInput == Gesture::Scissor || 
+            se.playerOneInput == Gesture::Scissor && se.playerTwoInput == Gesture::Rock)
+                se.res = RoundResult::PlayerTwoWins;
+            else 
+                se.res = RoundResult::PlayerOneWins;
+        }
+
+        std::cout << (se.res == RoundResult::Draw ? "Draw" : se.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
+
+
         m_running = player1->wantToPlayAgain() && player2->wantToPlayAgain();
     }
+
+    // send summary to both players
 }
 
 
