@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Server.h"
 #include <iostream>
 
 Gesture getLocalInput()
@@ -48,6 +49,8 @@ HumanPlayer::HumanPlayer(bool isLocal)
     }
     else
     {
+        Server& server = Server::get();
+        server.waitForConnection();
         m_getInputFunc = std::bind(getNetworkInput);
         m_getPlayAgainInputFunc = std::bind(getNetworkPlayAgainInput);
     }
