@@ -103,8 +103,9 @@ void Game::runHost()
         m_running = player1->wantToPlayAgain() && player2->wantToPlayAgain();
     }
 
-    // send summary to both players
     auto summary = getMatchSummary();
+
+    // send summary to both players
     player1->announceSummary(summary);
     player2->announceSummary(summary);
 }
@@ -129,10 +130,9 @@ void Game::runJoinee()
         networkClient->sendData((const char*)&playAgainInputMsg, sizeof(NetworkMessage));
         // wait for ack
 
-        // display round winner
+        // get round winner from server
         char recvbuf[DEFAULT_BUFLEN];
         int bytes = networkClient->recieveData(recvbuf, DEFAULT_BUFLEN);
-
         NetworkMessage msg;
         memcpy(&msg, recvbuf, sizeof(NetworkMessage));
 
@@ -142,12 +142,24 @@ void Game::runJoinee()
         else
             __debugbreak();
 
-        std::cout << (roundRes == RoundResult::Draw ? "Draw" : roundRes == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
+        player1->announceWinner(roundRes);
     }
 
-    // wait for server to send summary and display summary
-    // destroy client
+    //get summary from server
+    char recvbuf[DEFAULT_BUFLEN];
+    int bytes = networkClient->recieveData(recvbuf, DEFAULT_BUFLEN);
+    NetworkMessage summaryMsg;
+    memcpy(&summaryMsg, recvbuf, sizeof(NetworkMessage));
 
+    std::string summary;
+    summary.reserve(summaryMsg.length);
+    const char* s = summary.c_str();
+    if (summaryMsg.type == MessageType::GameSummary)
+        summary = std::string(summaryMsg.data, summaryMsg.length); //memcpy(&s, &summaryMsg.data, summaryMsg.length);
+    else
+        __debugbreak();
+
+    player1->announceSummary(summary);
 }
 
 std::string Game::getMatchSummary() 
