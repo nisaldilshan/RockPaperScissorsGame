@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Server.h"
 #include <iostream>
+#include <cassert>
+#include <sstream>
 
 Gesture getLocalInput()
 {
@@ -91,12 +93,28 @@ void announceSummaryLocal(std::string summary)
 
 void announceWinnerNetwork(RoundResult winner) 
 {
+    Server& server = Server::get();
+    NetworkMessage winnerMsg;
+    winnerMsg.type = MessageType::Winner;
+    memcpy(winnerMsg.data, &winner, sizeof(RoundResult));
+    server.sendData((const char*)&winnerMsg, sizeof(NetworkMessage));
+
+    //wait for ack
     
 }
 
 void announceSummaryNetwork(std::string summary) 
 {
-    
+    Server& server = Server::get();
+    NetworkMessage summaryMsg;
+    summaryMsg.type = MessageType::GameSummary;
+    assert(summary.length() <= SIZEOF_DATA);
+    summaryMsg.length = (int)summary.length();
+    const char * s = summary.c_str();
+    memcpy(summaryMsg.data, s, summary.length());
+    server.sendData((const char*)&summaryMsg, sizeof(NetworkMessage));
+
+    //wait for ack
 }
 
 

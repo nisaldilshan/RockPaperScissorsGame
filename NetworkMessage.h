@@ -10,8 +10,11 @@ enum class MessageType {
     Ack
 }; 
 
+#define SIZEOF_DATA  DEFAULT_BUFLEN - sizeof(MessageType) - sizeof(int)
+
 struct NetworkMessage
 {
     MessageType type;
-    char data[DEFAULT_BUFLEN - sizeof(MessageType)];
+    int length;
+    char data[SIZEOF_DATA];
 };

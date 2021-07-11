@@ -57,15 +57,6 @@ Server::Server(/* args */)
     }
     freeaddrinfo(result);
 
-    
-
-
-
-    //constexpr int DEFAULT_BUFLEN = 512;
-
-    //char recvbuf[DEFAULT_BUFLEN];
-    //int recvbuflen = DEFAULT_BUFLEN;
-
 }
 
 Server::~Server()
