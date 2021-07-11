@@ -61,10 +61,10 @@ Server::Server(/* args */)
 
 
 
-    constexpr int DEFAULT_BUFLEN = 512;
+    //constexpr int DEFAULT_BUFLEN = 512;
 
-    char recvbuf[DEFAULT_BUFLEN];
-    int recvbuflen = DEFAULT_BUFLEN;
+    //char recvbuf[DEFAULT_BUFLEN];
+    //int recvbuflen = DEFAULT_BUFLEN;
 
 }
 
@@ -110,18 +110,25 @@ void Server::waitForConnection()
 
 int Server::getData(char * buffer, int length) 
 {
-    int iResult = recv(m_clientSocket, buffer, length, 0);
-    if (iResult > 0) {
-        printf("Bytes received: %d\n", iResult);
-    } else if (iResult == 0)
-        printf("Connection closing...\n");
-    else {
-        printf("recv failed: %d\n", WSAGetLastError());
-        closesocket(m_clientSocket);
-        WSACleanup();
-        //return 1;
+    int recvLength = 0;
+    while (recvLength < DEFAULT_BUFLEN)
+    {
+        int iResult = recv(m_clientSocket, buffer, length, 0);
+        if (iResult > 0) {
+            printf("Bytes received: %d\n", iResult);
+            recvLength += iResult;
+        } 
+        else if (iResult == 0)
+            printf("Connection closing...\n");
+        else {
+            printf("recv failed: %d\n", WSAGetLastError());
+            closesocket(m_clientSocket);
+            WSACleanup();
+            //return 1;
+        }
     }
-    return iResult;
+    
+    return recvLength;
 }
 
 void Server::sendData(char * buffer, int length) 

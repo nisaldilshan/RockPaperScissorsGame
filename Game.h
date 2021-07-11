@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "Client.h"
-#include "NetworkMessage.h"
 #include <memory>
 #include <iostream>
 #include <list>
@@ -124,14 +123,17 @@ void Game::runJoinee()
     while (m_running)
     {
         Gesture playerOneInput = player1->play();
-        NetworkMessage msg;
-        msg.type = MessageType::PlayerInput;
-        memcpy(msg.data, &playerOneInput, sizeof(Gesture));
-        networkClient->sendData((const char*)&msg, sizeof(NetworkMessage));
+        NetworkMessage inputMsg;
+        inputMsg.type = MessageType::PlayerInput;
+        memcpy(inputMsg.data, &playerOneInput, sizeof(Gesture));
+        networkClient->sendData((const char*)&inputMsg, sizeof(NetworkMessage));
+        // wait for ack
 
         m_running = player1->wantToPlayAgain();
-        //networkClient->sendData(&msg, sizeof(NetworkMessage));
-
+        NetworkMessage playAgainInputMsg;
+        playAgainInputMsg.type = MessageType::PlayerPlayAgainInput;
+        memcpy(playAgainInputMsg.data, &m_running, sizeof(bool));
+        networkClient->sendData((const char*)&playAgainInputMsg, sizeof(NetworkMessage));
         // wait for ack
 
         // display round winner
