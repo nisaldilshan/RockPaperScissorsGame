@@ -22,3 +22,13 @@ bool ComputerPlayer::getPlayAgainInput()
 {
     return true;
 }
+
+void ComputerPlayer::announceWinner(RoundResult winner) 
+{
+    
+}
+
+void ComputerPlayer::announceSummary(std::string summary) 
+{
+    
+}

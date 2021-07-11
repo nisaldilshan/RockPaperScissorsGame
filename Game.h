@@ -3,12 +3,7 @@
 #include <memory>
 #include <iostream>
 #include <list>
-
-enum class RoundResult { 
-    PlayerOneWins, 
-    PlayerTwoWins,
-    Draw
-}; 
+#include <sstream>
 
 struct ScoreEntry
 {
@@ -30,10 +25,11 @@ public:
 private:
     void runHost();
     void runJoinee();
+    std::string getMatchSummary();
     std::unique_ptr<Player> player1;
     std::unique_ptr<Player> player2;
     bool m_running = true;
-    std::list<ScoreEntry> scores;
+    std::list<ScoreEntry> m_scores;
     bool m_isSinglePlayer = true;
     bool m_isHost = true;
 };
@@ -100,24 +96,21 @@ void Game::runHost()
                 se.res = RoundResult::PlayerOneWins;
         }
 
-        scores.push_back(se);
-        std::cout << (se.res == RoundResult::Draw ? "Draw" : se.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
-
+        m_scores.push_back(se);
+        player1->announceWinner(se.res);
+        player2->announceWinner(se.res);
 
         m_running = player1->wantToPlayAgain() && player2->wantToPlayAgain();
     }
 
     // send summary to both players
-    int round = 1;
-    for (auto score : scores)
-    {
-        std::cout << "Round" << round++ << " : " << (score.res == RoundResult::Draw ? "Draw" : score.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
-    }
+    auto summary = getMatchSummary();
+    player1->announceSummary(summary);
+    player2->announceSummary(summary);
 }
 
 void Game::runJoinee() 
 {
-    char recvbuf[DEFAULT_BUFLEN];
     auto networkClient = std::make_unique<Client>();
 
     while (m_running)
@@ -137,11 +130,35 @@ void Game::runJoinee()
         // wait for ack
 
         // display round winner
+        char recvbuf[DEFAULT_BUFLEN];
+        int bytes = networkClient->recieveData(recvbuf, DEFAULT_BUFLEN);
+
+        NetworkMessage msg;
+        memcpy(&msg, recvbuf, sizeof(NetworkMessage));
+
+        RoundResult roundRes;
+        if (msg.type == MessageType::Winner)
+            memcpy(&roundRes, &msg.data, sizeof(RoundResult));
+        else
+            __debugbreak();
+
+        std::cout << (roundRes == RoundResult::Draw ? "Draw" : roundRes == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
     }
 
     // wait for server to send summary and display summary
     // destroy client
 
+}
+
+std::string Game::getMatchSummary() 
+{
+    int round = 1;
+    std::stringstream ss;
+    for (auto score : m_scores)
+    {
+        ss << "Round" << round++ << " : " << (score.res == RoundResult::Draw ? "Draw" : score.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
+    }
+    return ss.str();
 }
 
 enum class Position{ LEFT, CENTRE, RIGHT };

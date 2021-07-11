@@ -14,8 +14,8 @@ public:
     ~Server();
     static Server& get();
     void waitForConnection();
-    int getData(char * buffer, int length);
-    void sendData(char * buffer, int length);
+    void sendData(const char * buffer, int length);
+    int recieveData(char * buffer, int length);
 private:
     SOCKET m_serverSocket = INVALID_SOCKET;
     SOCKET m_clientSocket = INVALID_SOCKET;

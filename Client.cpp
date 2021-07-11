@@ -96,17 +96,25 @@ void Client::sendData(const char * buffer, size_t length)
     printf("Bytes Sent: %ld\n", iResult);
 }
 
-void Client::recieveData(char * buffer, int length) 
+int Client::recieveData(char * buffer, int length) 
 {
-    // Receive data until the server closes the connection
-    int iResult;
-    do {
-        iResult = recv(m_Socket, buffer, length, 0);
-        if (iResult > 0)
+    int recvLength = 0;
+    while (recvLength < DEFAULT_BUFLEN)
+    {
+        int iResult = recv(m_Socket, buffer, length, 0);
+        if (iResult > 0) {
             printf("Bytes received: %d\n", iResult);
+            recvLength += iResult;
+        } 
         else if (iResult == 0)
-            printf("Connection closed\n");
-        else
+            printf("Connection closing...\n");
+        else {
             printf("recv failed: %d\n", WSAGetLastError());
-    } while (iResult > 0);
+            closesocket(m_Socket);
+            WSACleanup();
+            //return 1;
+        }
+    }
+    
+    return recvLength;
 }

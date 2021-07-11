@@ -12,7 +12,7 @@ public:
     Client(/* args */);
     ~Client();
     void sendData(const char * buffer, size_t length);
-    void recieveData(char * buffer, int length);
+    int recieveData(char * buffer, int length);
 private:
     SOCKET m_Socket = INVALID_SOCKET;
 };

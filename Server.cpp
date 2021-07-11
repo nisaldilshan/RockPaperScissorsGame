@@ -108,7 +108,7 @@ void Server::waitForConnection()
     std::cout << "Success : client connected to server" << std::endl;
 }
 
-int Server::getData(char * buffer, int length) 
+int Server::recieveData(char * buffer, int length) 
 {
     int recvLength = 0;
     while (recvLength < DEFAULT_BUFLEN)
@@ -131,7 +131,7 @@ int Server::getData(char * buffer, int length)
     return recvLength;
 }
 
-void Server::sendData(char * buffer, int length) 
+void Server::sendData(const char * buffer, int length) 
 {
     // Echo the buffer back to the sender
     int iSendResult = send(m_clientSocket, buffer, length, 0);

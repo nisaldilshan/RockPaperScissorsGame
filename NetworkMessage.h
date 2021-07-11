@@ -5,6 +5,8 @@
 enum class MessageType { 
     PlayerInput, 
     PlayerPlayAgainInput,
+    Winner,
+    GameSummary,
     Ack
 }; 
 

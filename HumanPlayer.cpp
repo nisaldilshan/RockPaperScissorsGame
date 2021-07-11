@@ -34,7 +34,7 @@ Gesture getNetworkInput()
 {
     char recvbuf[DEFAULT_BUFLEN];
     Server& server = Server::get();
-    int bytes = server.getData(recvbuf, DEFAULT_BUFLEN);
+    int bytes = server.recieveData(recvbuf, DEFAULT_BUFLEN);
     
     NetworkMessage msg;
     memcpy(&msg, recvbuf, sizeof(NetworkMessage));
@@ -60,7 +60,7 @@ bool getNetworkPlayAgainInput()
 {
     char recvbuf[DEFAULT_BUFLEN];
     Server& server = Server::get();
-    int bytes = server.getData(recvbuf, DEFAULT_BUFLEN);
+    int bytes = server.recieveData(recvbuf, DEFAULT_BUFLEN);
 
     NetworkMessage msg;
     memcpy(&msg, recvbuf, sizeof(NetworkMessage));
@@ -79,12 +79,35 @@ bool getNetworkPlayAgainInput()
     return playAgain;
 }
 
+void announceWinnerLocal(RoundResult winner) 
+{
+    std::cout << (winner== RoundResult::Draw ? "Draw" : winner == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
+}
+
+void announceSummaryLocal(std::string summary) 
+{
+    std::cout << summary << std::endl;
+}
+
+void announceWinnerNetwork(RoundResult winner) 
+{
+    
+}
+
+void announceSummaryNetwork(std::string summary) 
+{
+    
+}
+
+
 HumanPlayer::HumanPlayer(bool isLocal)
 {
     if (isLocal)
     {
         m_getInputFunc = std::bind(getLocalInput);
         m_getPlayAgainInputFunc = std::bind(getLocalPlayAgainInput);
+        m_announceWinnerFunc = std::bind(announceWinnerLocal, std::placeholders::_1);
+        m_announceSummaryFunc = std::bind(announceSummaryLocal, std::placeholders::_1);
     }
     else
     {
@@ -92,6 +115,8 @@ HumanPlayer::HumanPlayer(bool isLocal)
         server.waitForConnection();
         m_getInputFunc = std::bind(getNetworkInput);
         m_getPlayAgainInputFunc = std::bind(getNetworkPlayAgainInput);
+        m_announceWinnerFunc = std::bind(announceWinnerNetwork, std::placeholders::_1);
+        m_announceSummaryFunc = std::bind(announceSummaryNetwork, std::placeholders::_1);
     }
 }
 
@@ -107,4 +132,14 @@ Gesture HumanPlayer::getInput()
 bool HumanPlayer::getPlayAgainInput() 
 {
     return m_getPlayAgainInputFunc();
+}
+
+void HumanPlayer::announceWinner(RoundResult winner) 
+{
+    m_announceWinnerFunc(winner);
+}
+
+void HumanPlayer::announceSummary(std::string summary) 
+{
+    m_announceSummaryFunc(summary);
 }
