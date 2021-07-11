@@ -32,6 +32,11 @@ bool getLocalPlayAgainInput()
 
 Gesture getNetworkInput()
 {
+    constexpr int DEFAULT_BUFLEN = 512;
+    char recvbuf[DEFAULT_BUFLEN];
+    Server& server = Server::get();
+    int bytes = server.getData(recvbuf, DEFAULT_BUFLEN);
+    std::cout << "Recieved : " << recvbuf <<std::endl;
     return Gesture::None;
 }
 

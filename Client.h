@@ -10,7 +10,7 @@ class Client
 public:
     Client(/* args */);
     ~Client();
-    void sendData(char * buffer, int length);
+    void sendData(const char * buffer, size_t length);
     void recieveData(char * buffer, int length);
 private:
     SOCKET m_Socket = INVALID_SOCKET;

@@ -91,6 +91,7 @@ void Server::waitForConnection()
         printf( "Listen failed with error: %ld\n", WSAGetLastError() );
         closesocket(m_serverSocket);
         WSACleanup();
+        std::cout << "Error : server listen" << std::endl;
         //return 1;
     }
 
@@ -100,8 +101,11 @@ void Server::waitForConnection()
         printf("accept failed: %d\n", WSAGetLastError());
         closesocket(m_serverSocket);
         WSACleanup();
+        std::cout << "Error : server accept" << std::endl;
         //return 1;
     }
+
+    std::cout << "Success : client connected to server" << std::endl;
 }
 
 int Server::getData(char * buffer, int length) 

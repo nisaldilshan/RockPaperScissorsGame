@@ -63,6 +63,8 @@ Client::Client(/* args */)
         //return 1;
     }
 
+    std::cout << "Success : client connected to server" << std::endl;
+
 }
 
 Client::~Client()
@@ -82,9 +84,9 @@ Client::~Client()
 
 }
 
-void Client::sendData(char * buffer, int length) 
+void Client::sendData(const char * buffer, size_t length) 
 {
-    int iResult = send(m_Socket, buffer, length, 0);
+    int iResult = send(m_Socket, buffer, (int)length, 0);
     if (iResult == SOCKET_ERROR) {
         printf("send failed: %d\n", WSAGetLastError());
         closesocket(m_Socket);

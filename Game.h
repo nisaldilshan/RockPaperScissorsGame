@@ -121,13 +121,13 @@ void Game::runJoinee()
     const char *sendbuf = "this is a test";
     char recvbuf[DEFAULT_BUFLEN];
     auto networkClient = std::make_unique<Client>();
+    //Client* networkClient = new Client();
 
-#if 0
     while (m_running)
     {
         ScoreEntry se;
         se.playerOneInput = player1->play();
-        // client.send();
+        networkClient->sendData(sendbuf, strlen(sendbuf));
 
         m_running = player1->wantToPlayAgain();
         // client.send();
@@ -139,7 +139,7 @@ void Game::runJoinee()
 
     // wait for server to send summary and display summary
     // destroy client
-#endif
+
 }
 
 enum class Position{ LEFT, CENTRE, RIGHT };
