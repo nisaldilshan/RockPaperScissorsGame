@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Client.h"
+#include "NetworkMessage.h"
 #include <memory>
 #include <iostream>
 #include <list>
@@ -117,20 +118,19 @@ void Game::runHost()
 
 void Game::runJoinee() 
 {
-    constexpr int DEFAULT_BUFLEN = 512;
-    const char *sendbuf = "this is a test";
     char recvbuf[DEFAULT_BUFLEN];
     auto networkClient = std::make_unique<Client>();
-    //Client* networkClient = new Client();
 
     while (m_running)
     {
-        ScoreEntry se;
-        se.playerOneInput = player1->play();
-        networkClient->sendData(sendbuf, strlen(sendbuf));
+        Gesture playerOneInput = player1->play();
+        NetworkMessage msg;
+        msg.type = MessageType::PlayerInput;
+        memcpy(msg.data, &playerOneInput, sizeof(Gesture));
+        networkClient->sendData((const char*)&msg, sizeof(NetworkMessage));
 
         m_running = player1->wantToPlayAgain();
-        // client.send();
+        //networkClient->sendData(&msg, sizeof(NetworkMessage));
 
         // wait for ack
 

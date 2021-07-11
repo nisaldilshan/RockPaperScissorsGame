@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Server.h"
+#include "NetworkMessage.h"
 #include <iostream>
 
 Gesture getLocalInput()
@@ -32,12 +33,26 @@ bool getLocalPlayAgainInput()
 
 Gesture getNetworkInput()
 {
-    constexpr int DEFAULT_BUFLEN = 512;
     char recvbuf[DEFAULT_BUFLEN];
     Server& server = Server::get();
     int bytes = server.getData(recvbuf, DEFAULT_BUFLEN);
-    std::cout << "Recieved : " << recvbuf <<std::endl;
-    return Gesture::None;
+    
+    NetworkMessage msg;
+    memcpy(&msg, recvbuf, sizeof(NetworkMessage));
+
+    Gesture ges = Gesture::None;
+    if (msg.type == MessageType::PlayerInput)
+        memcpy(&ges, &msg.data, sizeof(Gesture));
+
+    if (ges == Gesture::Rock)
+        std::cout << "recieved Gesture::Rock "  << std::endl;
+    else if (ges == Gesture::Paper)
+        std::cout << "recieved Gesture::Paper "  << std::endl;
+    else if (ges == Gesture::Scissor)
+        std::cout << "recieved Gesture::Scissor "  << std::endl;
+    else 
+        std::cout << "recieved Gesture::None "  << std::endl;
+    return ges;
 }
 
 bool getNetworkPlayAgainInput()

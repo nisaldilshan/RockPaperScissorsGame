@@ -2,7 +2,7 @@
 #include <functional>
 
 enum class Gesture { 
-    Rock, 
+    Rock = 1, 
     Paper, 
     Scissor,
     None
