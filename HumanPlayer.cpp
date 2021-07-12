@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Server.h"
+#include "Client.h"
 #include <iostream>
 #include <cassert>
 #include <sstream>
@@ -100,7 +101,15 @@ void announceWinnerNetwork(RoundResult winner)
     server.sendData((const char*)&winnerMsg, sizeof(NetworkMessage));
 
     //wait for ack
-    
+    char recvbuf[DEFAULT_BUFLEN];
+    int bytes = server.recieveData(recvbuf, DEFAULT_BUFLEN);
+    NetworkMessage ackMsg;
+    memcpy(&ackMsg, recvbuf, sizeof(NetworkMessage));
+
+    if (ackMsg.type == MessageType::Ack)
+        std::cout << "Acknowledged" <<std::endl;
+    else
+        __debugbreak();
 }
 
 void announceSummaryNetwork(std::string summary) 
@@ -118,7 +127,7 @@ void announceSummaryNetwork(std::string summary)
 }
 
 
-HumanPlayer::HumanPlayer(bool isLocal)
+HumanPlayer::HumanPlayer(bool isLocal, bool isHost)
 {
     if (isLocal)
     {
@@ -126,15 +135,22 @@ HumanPlayer::HumanPlayer(bool isLocal)
         m_getPlayAgainInputFunc = std::bind(getLocalPlayAgainInput);
         m_announceWinnerFunc = std::bind(announceWinnerLocal, std::placeholders::_1);
         m_announceSummaryFunc = std::bind(announceSummaryLocal, std::placeholders::_1);
+
+        if (!isHost)
+        {
+            Client& client = Client::get();
+            client.connectToServer();
+        }
     }
     else
     {
-        Server& server = Server::get();
-        server.waitForConnection();
         m_getInputFunc = std::bind(getNetworkInput);
         m_getPlayAgainInputFunc = std::bind(getNetworkPlayAgainInput);
         m_announceWinnerFunc = std::bind(announceWinnerNetwork, std::placeholders::_1);
         m_announceSummaryFunc = std::bind(announceSummaryNetwork, std::placeholders::_1);
+
+        Server& server = Server::get();
+        server.waitForConnection();
     }
 }
 

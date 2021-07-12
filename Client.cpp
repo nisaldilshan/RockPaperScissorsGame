@@ -10,8 +10,34 @@ Client::Client(/* args */)
         //return 1;
     }
 
+}
 
-    struct addrinfo *result = NULL, *ptr = NULL, hints;
+Client::~Client()
+{
+    // shutdown the send half of the connection since no more data will be sent
+    int iResult = shutdown(m_Socket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        printf("shutdown failed: %d\n", WSAGetLastError());
+        closesocket(m_Socket);
+        WSACleanup();
+        //return 1;
+    }
+
+    // cleanup
+    closesocket(m_Socket);
+    WSACleanup();
+
+}
+
+Client& Client::get() 
+{
+    static Client instance;
+    return instance;
+}
+
+void Client::connectToServer() 
+{
+    struct addrinfo *result = NULL, hints;
 
     ZeroMemory( &hints, sizeof(hints) );
     hints.ai_family = AF_UNSPEC;
@@ -22,7 +48,7 @@ Client::Client(/* args */)
     constexpr char* DEFAULT_IP = "127.0.0.1";
 
     // Resolve the server address and port
-    iResult = getaddrinfo(DEFAULT_IP, DEFAULT_PORT, &hints, &result);
+    int iResult = getaddrinfo(DEFAULT_IP, DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
         printf("getaddrinfo failed: %d\n", iResult);
         WSACleanup();
@@ -31,7 +57,7 @@ Client::Client(/* args */)
 
     // Attempt to connect to the first address returned by
     // the call to getaddrinfo
-    ptr=result;
+    struct addrinfo *ptr=result;
 
     // Create a SOCKET for connecting to server
     m_Socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
@@ -64,30 +90,6 @@ Client::Client(/* args */)
     }
 
     std::cout << "Success : client connected to server" << std::endl;
-
-}
-
-Client::~Client()
-{
-    // shutdown the send half of the connection since no more data will be sent
-    int iResult = shutdown(m_Socket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed: %d\n", WSAGetLastError());
-        closesocket(m_Socket);
-        WSACleanup();
-        //return 1;
-    }
-
-    // cleanup
-    closesocket(m_Socket);
-    WSACleanup();
-
-}
-
-Client& Client::get() 
-{
-    static Client instance;
-    return instance;
 }
 
 void Client::sendData(const char * buffer, size_t length) 

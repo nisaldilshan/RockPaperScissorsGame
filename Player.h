@@ -51,7 +51,7 @@ private:
 class HumanPlayer : public Player
 {
 public:
-    HumanPlayer(bool isLocal = true);
+    HumanPlayer(bool isLocal = true, bool isHost = false);
     ~HumanPlayer();
     virtual void announceWinner(RoundResult winner) override;
     virtual void announceSummary(std::string summary) override;

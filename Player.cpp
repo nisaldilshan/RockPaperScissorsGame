@@ -10,13 +10,12 @@ Player::~Player()
 
 Gesture Player::play() 
 {
-    Gesture in = getInput();
-    m_playAgain = getPlayAgainInput();
-    return in;
+    return getInput();
 }
 
 bool Player::wantToPlayAgain() 
 {
+    m_playAgain = getPlayAgainInput();
     return m_playAgain;
 }
 

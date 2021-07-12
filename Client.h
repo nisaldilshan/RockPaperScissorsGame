@@ -12,6 +12,7 @@ public:
     Client(/* args */);
     ~Client();
     static Client& get();
+    void connectToServer();
     void sendData(const char * buffer, size_t length);
     int recieveData(char * buffer, int length);
 private:
