@@ -48,8 +48,8 @@ void Game::runHost()
         applyGameLogicHost(se);
         m_running = player2->wantToPlayAgain() && player1->wantToPlayAgain();
 
-        player1->announceWinner(se.res);
-        player2->announceWinner(se.res);
+        player1->announceWinner(se.res, m_running);
+        player2->announceWinner(se.res, m_running);
     }
 
     endGameHost();
@@ -64,7 +64,7 @@ void Game::runJoinee()
 
         applyGameLogicJoiner(se);
 
-        player1->announceWinner(se.res);
+        player1->announceWinner(se.res, m_running);
     }
 
     endGameJoiner();
@@ -110,7 +110,7 @@ void Game::applyGameLogicJoiner(ScoreEntry& se)
     NetworkMessage ackMsg1;
     memcpy(&ackMsg1, recvbuf1, sizeof(NetworkMessage));
     if (ackMsg1.type == MessageType::Ack)
-        std::cout << "Acknowledged" <<std::endl;
+        Util::Log("Acknowledged");
     else
         Util::Error("Expected Ack message");
 
@@ -128,7 +128,7 @@ void Game::applyGameLogicJoiner(ScoreEntry& se)
     NetworkMessage ackMsg2;
     memcpy(&ackMsg2, recvbuf2, sizeof(NetworkMessage));
     if (ackMsg2.type == MessageType::Ack)
-        std::cout << "Acknowledged" <<std::endl;
+        Util::Log("Acknowledged");
     else
         Util::Error("Expected Ack message");
 
@@ -141,7 +141,10 @@ void Game::applyGameLogicJoiner(ScoreEntry& se)
     memcpy(&msg, recvbuf3, sizeof(NetworkMessage));
 
     if (msg.type == MessageType::Winner)
-        memcpy(&se.res, &msg.data, sizeof(RoundResult));
+    {
+        memcpy(&se.res, msg.data, sizeof(RoundResult));
+        memcpy(&m_running, msg.data + sizeof(RoundResult), sizeof(bool));
+    }
     else
         Util::Error("Expected Winner message");
 

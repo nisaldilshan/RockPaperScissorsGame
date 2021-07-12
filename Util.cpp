@@ -2,12 +2,12 @@
 #include <iostream>
 #include <exception>
 
-void Util::Log(const char* logString) 
+void Util::Log(const std::string&& logString) 
 {
     std::cerr << "LOG:" << logString << std::endl;
 }
 
-void Util::Error(const char* errorString) 
+void Util::Error(const std::string&& errorString) 
 {
     std::cerr << "ERROR:" << errorString << std::endl;
     __debugbreak();

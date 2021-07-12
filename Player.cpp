@@ -15,8 +15,7 @@ Gesture Player::play()
 
 bool Player::wantToPlayAgain() 
 {
-    m_playAgain = getPlayAgainInput();
-    return m_playAgain;
+    return getPlayAgainInput();
 }
 
 void Player::processInput(Gesture input) 

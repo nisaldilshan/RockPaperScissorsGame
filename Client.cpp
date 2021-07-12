@@ -1,4 +1,5 @@
 #include "Client.h"
+#include "Util.h"
 
 Client::Client(/* args */)
 {
@@ -89,19 +90,18 @@ void Client::connectToServer()
         //return 1;
     }
 
-    std::cout << "Success : client connected to server" << std::endl;
+    Util::Log("Success : client connected to server");
 }
 
 void Client::sendData(const char * buffer, size_t length) 
 {
     int iResult = send(m_Socket, buffer, (int)length, 0);
     if (iResult == SOCKET_ERROR) {
-        std::cout << "send failed: " << WSAGetLastError() << std::endl;
         closesocket(m_Socket);
         WSACleanup();
-        //return 1;
+        Util::Error("send failed: " + std::to_string(WSAGetLastError()));
     }
-    std::cout << "Bytes Sent: " << iResult << std::endl;
+    Util::Log("Bytes Sent: " + std::to_string(iResult));
 }
 
 int Client::recieveData(char * buffer, int length) 
@@ -111,16 +111,15 @@ int Client::recieveData(char * buffer, int length)
     {
         int iResult = recv(m_Socket, buffer, length, 0);
         if (iResult > 0) {
-            std::cout << "Bytes received: " << iResult << std::endl;
+            Util::Log("Bytes received: " + std::to_string(iResult));
             recvLength += iResult;
         } 
         else if (iResult == 0)
-            std::cout << "Connection closing..." << std::endl;
+            Util::Error("Connection closing...");
         else {
-            std::cout << "recv failed: " << WSAGetLastError() << std::endl;
             closesocket(m_Socket);
             WSACleanup();
-            //return 1;
+            Util::Error("recv failed: " + std::to_string(WSAGetLastError()));
         }
     }
     

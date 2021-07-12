@@ -94,7 +94,7 @@ bool getNetworkPlayAgainInput()
     return playAgain;
 }
 
-void announceWinnerLocal(RoundResult winner) 
+void announceWinnerLocal(RoundResult winner, bool) 
 {
     std::cout << (winner== RoundResult::Draw ? "Draw" : winner == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
 }
@@ -104,12 +104,13 @@ void announceSummaryLocal(std::string summary)
     std::cout << summary << std::endl;
 }
 
-void announceWinnerNetwork(RoundResult winner) 
+void announceWinnerNetwork(RoundResult winner, bool playAgain) 
 {
     Server& server = Server::get();
     NetworkMessage winnerMsg;
     winnerMsg.type = MessageType::Winner;
     memcpy(winnerMsg.data, &winner, sizeof(RoundResult));
+    memcpy(winnerMsg.data + sizeof(RoundResult), &playAgain, sizeof(bool));
     server.sendData((const char*)&winnerMsg, sizeof(NetworkMessage));
 
     // wait for ack
@@ -119,7 +120,7 @@ void announceWinnerNetwork(RoundResult winner)
     memcpy(&ackMsg, recvbuf, sizeof(NetworkMessage));
 
     if (ackMsg.type == MessageType::Ack)
-        std::cout << "Acknowledged" <<std::endl;
+        Util::Log("Acknowledged");
     else
         Util::Error("Expected Ack message");
 }
@@ -145,7 +146,7 @@ HumanPlayer::HumanPlayer(bool isLocal, bool isHost)
     {
         m_getInputFunc = std::bind(getLocalInput);
         m_getPlayAgainInputFunc = std::bind(getLocalPlayAgainInput);
-        m_announceWinnerFunc = std::bind(announceWinnerLocal, std::placeholders::_1);
+        m_announceWinnerFunc = std::bind(announceWinnerLocal, std::placeholders::_1, std::placeholders::_2);
         m_announceSummaryFunc = std::bind(announceSummaryLocal, std::placeholders::_1);
 
         if (!isHost)
@@ -158,7 +159,7 @@ HumanPlayer::HumanPlayer(bool isLocal, bool isHost)
     {
         m_getInputFunc = std::bind(getNetworkInput);
         m_getPlayAgainInputFunc = std::bind(getNetworkPlayAgainInput);
-        m_announceWinnerFunc = std::bind(announceWinnerNetwork, std::placeholders::_1);
+        m_announceWinnerFunc = std::bind(announceWinnerNetwork, std::placeholders::_1, std::placeholders::_2);
         m_announceSummaryFunc = std::bind(announceSummaryNetwork, std::placeholders::_1);
 
         Server& server = Server::get();
@@ -180,9 +181,9 @@ bool HumanPlayer::getPlayAgainInput()
     return m_getPlayAgainInputFunc();
 }
 
-void HumanPlayer::announceWinner(RoundResult winner) 
+void HumanPlayer::announceWinner(RoundResult winner, bool playAgain) 
 {
-    m_announceWinnerFunc(winner);
+    m_announceWinnerFunc(winner, playAgain);
 }
 
 void HumanPlayer::announceSummary(std::string summary) 

@@ -23,7 +23,7 @@ bool ComputerPlayer::getPlayAgainInput()
     return true;
 }
 
-void ComputerPlayer::announceWinner(RoundResult winner) 
+void ComputerPlayer::announceWinner(RoundResult winner, bool playAgain) 
 {
     
 }
