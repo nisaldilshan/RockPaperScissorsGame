@@ -11,24 +11,12 @@ class Client
 public:
     Client(/* args */);
     ~Client();
+    static Client& get();
     void sendData(const char * buffer, size_t length);
     int recieveData(char * buffer, int length);
 private:
     SOCKET m_Socket = INVALID_SOCKET;
 };
-
-
-
-// shutdown the connection for sending since no more data will be sent
-// the client can still use the ConnectSocket for receiving data
-
-// iResult = shutdown(m_Socket, SD_SEND);
-// if (iResult == SOCKET_ERROR) {
-//     printf("shutdown failed: %d\n", WSAGetLastError());
-//     closesocket(m_Socket);
-//     WSACleanup();
-//     //return 1;
-// }
 
     
 

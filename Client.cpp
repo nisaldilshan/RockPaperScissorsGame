@@ -84,6 +84,12 @@ Client::~Client()
 
 }
 
+Client& Client::get() 
+{
+    static Client instance;
+    return instance;
+}
+
 void Client::sendData(const char * buffer, size_t length) 
 {
     int iResult = send(m_Socket, buffer, (int)length, 0);
