@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Server.h"
 #include "Client.h"
+#include "Util.h"
 #include <iostream>
 #include <cassert>
 #include <sstream>
@@ -46,7 +47,7 @@ Gesture getNetworkInput()
     if (msg.type == MessageType::PlayerInput)
         memcpy(&ges, &msg.data, sizeof(Gesture));
     else
-        __debugbreak();
+        Util::Error("Expected PlayerInput message");
 
 
     // send Ack
@@ -78,7 +79,7 @@ bool getNetworkPlayAgainInput()
     if (msg.type == MessageType::PlayerPlayAgainInput)
         memcpy(&playAgain, &msg.data, sizeof(bool));
     else
-        __debugbreak();
+        Util::Error("Expected PlayerPlayAgainInput message");
 
     // send Ack
     NetworkMessage sendAckMsg;
@@ -120,7 +121,7 @@ void announceWinnerNetwork(RoundResult winner)
     if (ackMsg.type == MessageType::Ack)
         std::cout << "Acknowledged" <<std::endl;
     else
-        __debugbreak();
+        Util::Error("Expected Ack message");
 }
 
 void announceSummaryNetwork(std::string summary) 
