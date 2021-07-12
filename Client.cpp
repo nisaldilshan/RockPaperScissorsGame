@@ -9,7 +9,7 @@ Client::~Client()
     // shutdown the send half of the connection since no more data will be sent
     int iResult = shutdown(m_Socket, SD_SEND);
     if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed: %d\n", WSAGetLastError());
+        std::cout << "shutdown failed: " << WSAGetLastError() << std::endl;
         closesocket(m_Socket);
         WSACleanup();
         //return 1;
@@ -50,7 +50,7 @@ void Client::connectToServer()
     // Resolve the server address and port
     iResult = getaddrinfo(DEFAULT_IP, DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
-        printf("getaddrinfo failed: %d\n", iResult);
+        std::cout << "getaddrinfo failed: " <<  iResult << std::endl;
         WSACleanup();
         //return 1;
     }
@@ -63,7 +63,7 @@ void Client::connectToServer()
     m_Socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 
     if (m_Socket == INVALID_SOCKET) {
-        printf("Error at socket(): %ld\n", WSAGetLastError());
+        std::cout << "Error at socket(): " <<  WSAGetLastError() << std::endl;
         freeaddrinfo(result);
         WSACleanup();
         //return 1;
@@ -84,7 +84,7 @@ void Client::connectToServer()
     freeaddrinfo(result);
 
     if (m_Socket == INVALID_SOCKET) {
-        printf("Unable to connect to server!\n");
+        std::cout << "Unable to connect to server!" << std::endl;
         WSACleanup();
         //return 1;
     }
@@ -96,12 +96,12 @@ void Client::sendData(const char * buffer, size_t length)
 {
     int iResult = send(m_Socket, buffer, (int)length, 0);
     if (iResult == SOCKET_ERROR) {
-        printf("send failed: %d\n", WSAGetLastError());
+        std::cout << "send failed: " << WSAGetLastError() << std::endl;
         closesocket(m_Socket);
         WSACleanup();
         //return 1;
     }
-    printf("Bytes Sent: %ld\n", iResult);
+    std::cout << "Bytes Sent: " << iResult << std::endl;
 }
 
 int Client::recieveData(char * buffer, int length) 
@@ -111,13 +111,13 @@ int Client::recieveData(char * buffer, int length)
     {
         int iResult = recv(m_Socket, buffer, length, 0);
         if (iResult > 0) {
-            printf("Bytes received: %d\n", iResult);
+            std::cout << "Bytes received: " << iResult << std::endl;
             recvLength += iResult;
         } 
         else if (iResult == 0)
-            printf("Connection closing...\n");
+            std::cout << "Connection closing..." << std::endl;
         else {
-            printf("recv failed: %d\n", WSAGetLastError());
+            std::cout << "recv failed: " << WSAGetLastError() << std::endl;
             closesocket(m_Socket);
             WSACleanup();
             //return 1;
