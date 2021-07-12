@@ -58,7 +58,7 @@ void Game::setup()
 {
     if (m_isSinglePlayer)
     {
-        player1 = std::make_unique<HumanPlayer>();
+        player1 = std::make_unique<HumanPlayer>(true, m_isHost);
         player2 = std::make_unique<ComputerPlayer>();
     }
     else
@@ -138,25 +138,47 @@ void Game::endGameHost()
 
 void Game::applyGameLogicJoiner(ScoreEntry& se) 
 {
-    auto networkClient = Client::get();
+    Client& networkClient = Client::get();
     NetworkMessage inputMsg;
     inputMsg.type = MessageType::PlayerInput;
     memcpy(inputMsg.data, &se.playerOneInput, sizeof(Gesture));
     networkClient.sendData((const char*)&inputMsg, sizeof(NetworkMessage));
+
     // wait for ack
+    char recvbuf1[DEFAULT_BUFLEN];
+    int b1 = networkClient.recieveData(recvbuf1, DEFAULT_BUFLEN);
+    NetworkMessage ackMsg1;
+    memcpy(&ackMsg1, recvbuf1, sizeof(NetworkMessage));
+    if (ackMsg1.type == MessageType::Ack)
+        std::cout << "Acknowledged" <<std::endl;
+    else
+        __debugbreak();
+
+    //////////////////////////////////////////////////////////////
 
     m_running = player1->wantToPlayAgain();
     NetworkMessage playAgainInputMsg;
     playAgainInputMsg.type = MessageType::PlayerPlayAgainInput;
     memcpy(playAgainInputMsg.data, &m_running, sizeof(bool));
     networkClient.sendData((const char*)&playAgainInputMsg, sizeof(NetworkMessage));
+
     // wait for ack
+    char recvbuf2[DEFAULT_BUFLEN];
+    int b2 = networkClient.recieveData(recvbuf2, DEFAULT_BUFLEN);
+    NetworkMessage ackMsg2;
+    memcpy(&ackMsg2, recvbuf2, sizeof(NetworkMessage));
+    if (ackMsg2.type == MessageType::Ack)
+        std::cout << "Acknowledged" <<std::endl;
+    else
+        __debugbreak();
+
+    //////////////////////////////////////////////////////////////
 
     // get round winner from server
-    char recvbuf[DEFAULT_BUFLEN];
-    int bytes = networkClient.recieveData(recvbuf, DEFAULT_BUFLEN);
+    char recvbuf3[DEFAULT_BUFLEN];
+    int b3 = networkClient.recieveData(recvbuf3, DEFAULT_BUFLEN);
     NetworkMessage msg;
-    memcpy(&msg, recvbuf, sizeof(NetworkMessage));
+    memcpy(&msg, recvbuf3, sizeof(NetworkMessage));
 
     if (msg.type == MessageType::Winner)
         memcpy(&se.res, &msg.data, sizeof(RoundResult));
@@ -164,16 +186,19 @@ void Game::applyGameLogicJoiner(ScoreEntry& se)
         __debugbreak();
 
 
-    //send Ack
+    // send Ack
     NetworkMessage sendAckMsg;
     sendAckMsg.type = MessageType::Ack;
     networkClient.sendData((const char*)&sendAckMsg, sizeof(NetworkMessage));
+
+
+    //////////////////////////////////////////////////////////////
 }
 
 void Game::endGameJoiner() 
 {
     //get summary from server
-    auto networkClient = Client::get();
+    Client& networkClient = Client::get();
     char recvbuf[DEFAULT_BUFLEN];
     int bytes = networkClient.recieveData(recvbuf, DEFAULT_BUFLEN);
     NetworkMessage summaryMsg;

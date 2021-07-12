@@ -2,14 +2,6 @@
 
 Client::Client(/* args */)
 {
-    WSADATA wsaData;
-    // Initialize Winsock
-    int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-    if (iResult != 0) {
-        std::cout << "WSAStartup failed: " << iResult << std::endl;
-        //return 1;
-    }
-
 }
 
 Client::~Client()
@@ -37,6 +29,14 @@ Client& Client::get()
 
 void Client::connectToServer() 
 {
+    WSADATA wsaData;
+    // Initialize Winsock
+    int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if (iResult != 0) {
+        std::cout << "WSAStartup failed: " << iResult << std::endl;
+        //return 1;
+    }
+
     struct addrinfo *result = NULL, hints;
 
     ZeroMemory( &hints, sizeof(hints) );
@@ -48,7 +48,7 @@ void Client::connectToServer()
     constexpr char* DEFAULT_IP = "127.0.0.1";
 
     // Resolve the server address and port
-    int iResult = getaddrinfo(DEFAULT_IP, DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo(DEFAULT_IP, DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
         printf("getaddrinfo failed: %d\n", iResult);
         WSACleanup();

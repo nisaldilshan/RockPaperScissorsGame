@@ -48,6 +48,12 @@ Gesture getNetworkInput()
     else
         __debugbreak();
 
+
+    // send Ack
+    NetworkMessage sendAckMsg;
+    sendAckMsg.type = MessageType::Ack;
+    server.sendData((const char*)&sendAckMsg, sizeof(NetworkMessage));
+
     if (ges == Gesture::Rock)
         std::cout << "recieved Gesture::Rock "  << std::endl;
     else if (ges == Gesture::Paper)
@@ -73,6 +79,11 @@ bool getNetworkPlayAgainInput()
         memcpy(&playAgain, &msg.data, sizeof(bool));
     else
         __debugbreak();
+
+    // send Ack
+    NetworkMessage sendAckMsg;
+    sendAckMsg.type = MessageType::Ack;
+    server.sendData((const char*)&sendAckMsg, sizeof(NetworkMessage));
 
     if (playAgain)
         std::cout << "recieved playAgain::Yes "  << std::endl;
@@ -100,7 +111,7 @@ void announceWinnerNetwork(RoundResult winner)
     memcpy(winnerMsg.data, &winner, sizeof(RoundResult));
     server.sendData((const char*)&winnerMsg, sizeof(NetworkMessage));
 
-    //wait for ack
+    // wait for ack
     char recvbuf[DEFAULT_BUFLEN];
     int bytes = server.recieveData(recvbuf, DEFAULT_BUFLEN);
     NetworkMessage ackMsg;
@@ -123,7 +134,7 @@ void announceSummaryNetwork(std::string summary)
     memcpy(summaryMsg.data, s, summary.length());
     server.sendData((const char*)&summaryMsg, sizeof(NetworkMessage));
 
-    //wait for ack
+    // wait for ack
 }
 
 
