@@ -57,13 +57,13 @@ Gesture getNetworkInput()
     server.sendData((const char*)&sendAckMsg, sizeof(NetworkMessage));
 
     if (ges == Gesture::Rock)
-        std::cout << "recieved Gesture::Rock "  << std::endl;
+        Util::Log("recieved Gesture::Rock ");
     else if (ges == Gesture::Paper)
-        std::cout << "recieved Gesture::Paper "  << std::endl;
+        Util::Log("recieved Gesture::Paper ");
     else if (ges == Gesture::Scissor)
-        std::cout << "recieved Gesture::Scissor "  << std::endl;
+        Util::Log("recieved Gesture::Scissor ");
     else 
-        std::cout << "recieved Gesture::None "  << std::endl;
+        Util::Log("recieved Gesture::None ");
     return ges;
 }
 
@@ -88,9 +88,9 @@ bool getNetworkPlayAgainInput()
     server.sendData((const char*)&sendAckMsg, sizeof(NetworkMessage));
 
     if (playAgain)
-        std::cout << "recieved playAgain::Yes "  << std::endl;
+        Util::Log("recieved playAgain::Yes ");
     else 
-        std::cout << "recieved playAgain::No "  << std::endl;
+        Util::Log("recieved playAgain::No ");
 
     return playAgain;
 }
