@@ -153,7 +153,7 @@ HumanPlayer::HumanPlayer(bool isLocal, bool isHost)
         if (!isHost)
         {
             Client& client = Client::get();
-            client.connectToServer(DEFAULT_IP, DEFAULT_PORT);
+            client.connectToServer(Util::getUserIPAddress().c_str(), DEFAULT_PORT);
         }
     }
     else

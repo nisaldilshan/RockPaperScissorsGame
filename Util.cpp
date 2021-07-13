@@ -1,4 +1,5 @@
 #include "Util.h"
+#include "Network.h"
 #include <iostream>
 #include <exception>
 
@@ -26,4 +27,25 @@ std::string Util::alignString( Position pos, std::string s, int linelength )
     if ( spaces > 0 ) 
         ret+= std::string( spaces, ' ' );
     return ret+s;
+}
+
+std::string Util::getUserIPAddress() 
+{
+    std::cout << "Do you want to connect to localhost (Default-" << DEFAULT_IP << ") ? (y/n) : "; 
+    char in;
+    std::cin >> in;
+    while (in != 'Y' && in != 'N' && in != 'y' && in != 'n')
+    {
+        std::cout << "Do you want to connect to localhost (Default-" << DEFAULT_IP << ") ? (y/n) : "; 
+        std::cin >> in;
+    }
+    std::string ipAddress(DEFAULT_IP);
+    if (in == 'N' || in == 'n')
+    {
+        std::cout << "Enter IP address : "; 
+        std::cin >> ipAddress;
+        std::cout << "Entered IP address is: " << ipAddress <<std::endl; 
+    }
+
+    return ipAddress;
 }
