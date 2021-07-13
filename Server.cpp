@@ -94,7 +94,7 @@ int Server::recieveData(char * buffer, int length)
     int recvLength = 0;
     while (recvLength < length)
     {
-        int iResult = recv(m_clientSocket, buffer, length, 0);
+        int iResult = recv(m_clientSocket, buffer, length - recvLength, 0);
         if (iResult > 0) {
             Util::Log("Bytes received: " + std::to_string(iResult));
             recvLength += iResult;
