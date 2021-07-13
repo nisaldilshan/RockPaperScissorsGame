@@ -12,6 +12,7 @@ public:
     Server(/* args */);
     ~Server();
     static Server& get();
+    void start(const char* port);
     void waitForConnection();
     void sendData(const char * buffer, int length);
     int recieveData(char * buffer, int length);

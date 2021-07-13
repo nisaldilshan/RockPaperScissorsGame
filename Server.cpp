@@ -5,20 +5,34 @@ Server& Server::get() {
   return instance;
 }
 
-Server::Server(/* args */)
+Server::Server()
 {
     WSADATA wsaData;
     // Initialize Winsock
     int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (iResult != 0) {
         std::cout << "WSAStartup failed: " << iResult << std::endl;
+    }
+}
+
+Server::~Server()
+{
+    // shutdown the connection since we're done
+    int iResult = shutdown(m_clientSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        std::cout << "shutdown failed with error: " << WSAGetLastError() << std::endl;
+        closesocket(m_clientSocket);
+        WSACleanup();
         //return 1;
     }
 
-    //creating a socket
+    // cleanup
+    closesocket(m_clientSocket);
+    WSACleanup();
+}
 
-    constexpr char* DEFAULT_PORT = "27015";
-
+void Server::start(const char* port) 
+{
     struct addrinfo *result = NULL, *ptr = NULL, hints;
 
     ZeroMemory(&hints, sizeof (hints));
@@ -28,7 +42,7 @@ Server::Server(/* args */)
     hints.ai_flags = AI_PASSIVE;
 
     // Resolve the local address and port to be used by the server
-    iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+    int iResult = getaddrinfo(NULL, port, &hints, &result);
     if (iResult != 0) {
         std::cout << "getaddrinfo failed: " << iResult << std::endl;
         WSACleanup();
@@ -56,23 +70,6 @@ Server::Server(/* args */)
         //return 1;
     }
     freeaddrinfo(result);
-
-}
-
-Server::~Server()
-{
-    // shutdown the connection since we're done
-    int iResult = shutdown(m_clientSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        std::cout << "shutdown failed with error: " << WSAGetLastError() << std::endl;
-        closesocket(m_clientSocket);
-        WSACleanup();
-        //return 1;
-    }
-
-    // cleanup
-    closesocket(m_clientSocket);
-    WSACleanup();
 }
 
 void Server::waitForConnection() 

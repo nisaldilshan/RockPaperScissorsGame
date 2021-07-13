@@ -153,7 +153,7 @@ HumanPlayer::HumanPlayer(bool isLocal, bool isHost)
         if (!isHost)
         {
             Client& client = Client::get();
-            client.connectToServer();
+            client.connectToServer(DEFAULT_IP, DEFAULT_PORT);
         }
     }
     else
@@ -164,6 +164,7 @@ HumanPlayer::HumanPlayer(bool isLocal, bool isHost)
         m_announceSummaryFunc = std::bind(announceSummaryNetwork, std::placeholders::_1);
 
         Server& server = Server::get();
+        server.start(DEFAULT_PORT);
         server.waitForConnection();
     }
 }

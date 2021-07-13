@@ -2,6 +2,10 @@
 
 #define DEFAULT_BUFLEN 512
 
+constexpr char* DEFAULT_PORT = "27015";
+constexpr char* DEFAULT_IP = "127.0.0.1";
+
+
 enum class MessageType { 
     PlayerInput, 
     PlayerPlayAgainInput,

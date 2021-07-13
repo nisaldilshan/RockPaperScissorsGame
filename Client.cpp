@@ -1,43 +1,39 @@
 #include "Client.h"
 #include "Util.h"
 
-Client::Client(/* args */)
-{
-}
-
-Client::~Client()
-{
-    // shutdown the send half of the connection since no more data will be sent
-    int iResult = shutdown(m_Socket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        std::cout << "shutdown failed: " << WSAGetLastError() << std::endl;
-        closesocket(m_Socket);
-        WSACleanup();
-        //return 1;
-    }
-
-    // cleanup
-    closesocket(m_Socket);
-    WSACleanup();
-
-}
-
 Client& Client::get() 
 {
     static Client instance;
     return instance;
 }
 
-void Client::connectToServer() 
+Client::Client(/* args */)
 {
     WSADATA wsaData;
     // Initialize Winsock
     int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (iResult != 0) {
-        std::cout << "WSAStartup failed: " << iResult << std::endl;
-        //return 1;
+        Util::Error("WSAStartup failed: " + std::to_string(iResult));
+    }
+}
+
+Client::~Client()
+{
+    // shutdown client socket
+    int iResult = shutdown(m_Socket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        closesocket(m_Socket);
+        WSACleanup();
+        Util::Error("shutdown failed: " + std::to_string(WSAGetLastError()));
     }
 
+    // cleanup
+    closesocket(m_Socket);
+    WSACleanup();
+}
+
+void Client::connectToServer(const char* ip, const char* port) 
+{
     struct addrinfo *result = NULL, hints;
 
     ZeroMemory( &hints, sizeof(hints) );
@@ -45,11 +41,8 @@ void Client::connectToServer()
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
 
-    constexpr char* DEFAULT_PORT = "27015";
-    constexpr char* DEFAULT_IP = "127.0.0.1";
-
     // Resolve the server address and port
-    iResult = getaddrinfo(DEFAULT_IP, DEFAULT_PORT, &hints, &result);
+    int iResult = getaddrinfo(ip, port, &hints, &result);
     if (iResult != 0) {
         std::cout << "getaddrinfo failed: " <<  iResult << std::endl;
         WSACleanup();

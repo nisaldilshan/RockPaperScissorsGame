@@ -11,7 +11,7 @@ public:
     Client(/* args */);
     ~Client();
     static Client& get();
-    void connectToServer();
+    void connectToServer(const char* ip, const char* port);
     void sendData(const char * buffer, size_t length);
     int recieveData(char * buffer, int length);
 private:
