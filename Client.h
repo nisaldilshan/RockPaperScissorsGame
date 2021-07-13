@@ -8,8 +8,12 @@
 class Client
 {
 public:
-    Client(/* args */);
+    Client();
     ~Client();
+    Client(const Client&) = delete;
+    Client& operator=(const Client&) = delete;
+    Client(Client&&) = delete;
+    Client& operator=(Client&&) = delete;
     static Client& get();
     void connectToServer(const char* ip, const char* port);
     void sendData(const char * buffer, size_t length);

@@ -32,8 +32,12 @@ private:
 class ComputerPlayer :public Player
 {
 public:
-    ComputerPlayer(/* args */);
+    ComputerPlayer();
     ~ComputerPlayer() = default;
+    ComputerPlayer(const ComputerPlayer&) = delete;
+    ComputerPlayer& operator=(const ComputerPlayer&) = delete;
+    ComputerPlayer(ComputerPlayer&&) = delete;
+    ComputerPlayer& operator=(ComputerPlayer&&) = delete;
     virtual void announceWinner(RoundResult winner, bool playAgain) override;
     virtual void announceSummary(std::string summary) override;
 private:
@@ -46,6 +50,10 @@ class HumanPlayer : public Player
 public:
     HumanPlayer(bool isLocal, bool isHost);
     ~HumanPlayer() = default;
+    HumanPlayer(const HumanPlayer&) = delete;
+    HumanPlayer& operator=(const HumanPlayer&) = delete;
+    HumanPlayer(HumanPlayer&&) = delete;
+    HumanPlayer& operator=(HumanPlayer&&) = delete;
     virtual void announceWinner(RoundResult winner, bool playAgain) override;
     virtual void announceSummary(std::string summary) override;
 private:

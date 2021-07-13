@@ -11,10 +11,6 @@ Game::Game(int gameMode, int connectMode)
         m_isHost = false;
 }
 
-Game::~Game()
-{
-}
-
 void Game::setup() 
 {
     if (m_isSinglePlayer)
@@ -192,8 +188,8 @@ std::pair<std::string, std::string> Game::getMatchSummary()
     ss1 << header << std::endl << alignString( Util::Position::CENTRE, "Game Summary", Util::LINELENGTH ) << std::endl << header << std::endl;
     ss2 << header << std::endl << alignString( Util::Position::CENTRE, "Game Summary", Util::LINELENGTH ) << std::endl << header << std::endl;
 
-    ss1 << "\t\t" << "You" << "\t\t" << "Opponent" << "\t" << "Winner" << std::endl;
-    ss2 << "\t\t" << "You" << "\t\t" << "Opponent" << "\t" << "Winner" << std::endl;
+    ss1 << "\t\t" << "You" << "\t\t" << "" << "\t" << "Winner" << std::endl;
+    ss2 << "\t\t" << "Opponent" << "\t\t" << "You" << "\t" << "Winner" << std::endl;
     for (auto score : m_scores)
     {
         ss1 << "Round" << round << "\t\t";

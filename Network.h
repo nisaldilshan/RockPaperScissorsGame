@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_BUFLEN 2048
+constexpr int DEFAULT_BUFLEN = 4096;
 
 constexpr char* DEFAULT_PORT = "27015";
 constexpr char* DEFAULT_IP = "127.0.0.1";
@@ -14,7 +14,7 @@ enum class MessageType {
     Ack
 }; 
 
-#define SIZEOF_DATA  DEFAULT_BUFLEN - sizeof(MessageType) - sizeof(int)
+constexpr int SIZEOF_DATA =  DEFAULT_BUFLEN - sizeof(MessageType) - sizeof(int);
 
 struct NetworkMessage
 {

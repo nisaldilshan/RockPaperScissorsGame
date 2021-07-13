@@ -17,7 +17,11 @@ class Game
 {
 public:
     Game(int gameMode, int connectMode);
-    ~Game();
+    ~Game() = default;
+    Game(const Game&) = delete;
+    Game& operator=(const Game&) = delete;
+    Game(Game&&) = delete;
+    Game& operator=(Game&&) = delete;
     void setup();
     void run();
     void exit();

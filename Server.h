@@ -11,6 +11,10 @@ class Server
 public:
     Server(/* args */);
     ~Server();
+    Server(const Server&) = delete;
+    Server& operator=(const Server&) = delete;
+    Server(Server&&) = delete;
+    Server& operator=(Server&&) = delete;
     static Server& get();
     void start(const char* port);
     void waitForConnection();
