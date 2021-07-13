@@ -9,7 +9,7 @@
 
 Gesture getLocalInput()
 {
-    std::cout << "Enter your choice, \n1.Rock, 2.Paper, 3.Scissors : ";
+    std::cout << "New Round : Enter your choice, \n1.Rock, 2.Paper, 3.Scissors : ";
     int inputGesture;
     std::cin >> inputGesture;
     while (inputGesture < 1 || inputGesture > 3)
@@ -97,10 +97,13 @@ bool getNetworkPlayAgainInput()
 
 void announceWinnerLocal(RoundResult winner, bool, bool isHostSide) 
 {
+    std::stringstream ss;
     if (isHostSide)
-        std::cout << "Round Result :" << (winner== RoundResult::Draw ? "Draw" : winner == RoundResult::PlayerOneWins ? "You Wins" : "Opponent Wins") << std::endl;
+        ss << "Round Result :" << (winner== RoundResult::Draw ? "Draw" : winner == RoundResult::PlayerOneWins ? "You Wins" : "Opponent Wins") << std::endl;
     else
-        std::cout << "Round Result :" << (winner== RoundResult::Draw ? "Draw" : winner == RoundResult::PlayerOneWins ? "Opponent Wins" : "You Wins") << std::endl;
+        ss << "Round Result :" << (winner== RoundResult::Draw ? "Draw" : winner == RoundResult::PlayerOneWins ? "Opponent Wins" : "You Wins") << std::endl;
+
+    std::cout << alignString( Util::Position::CENTRE, ss.str(), Util::LINELENGTH ) << std::endl;
 }
 
 void announceSummaryLocal(std::string summary) 

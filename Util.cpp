@@ -5,7 +5,9 @@
 
 void Util::Log(const std::string&& logString) 
 {
-    std::cerr << "LOG:" << logString << std::endl;
+#ifdef DEBUG_LOG
+    std::cout << "LOG:" << logString << std::endl;
+#endif
 }
 
 void Util::Error(const std::string&& errorString) 
