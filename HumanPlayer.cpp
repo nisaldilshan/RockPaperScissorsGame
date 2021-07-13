@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Server.h"
 #include "Client.h"
+#include "Network.h"
 #include "Util.h"
 #include <iostream>
 #include <cassert>
@@ -165,10 +166,6 @@ HumanPlayer::HumanPlayer(bool isLocal, bool isHost)
         Server& server = Server::get();
         server.waitForConnection();
     }
-}
-
-HumanPlayer::~HumanPlayer()
-{
 }
 
 Gesture HumanPlayer::getInput() 

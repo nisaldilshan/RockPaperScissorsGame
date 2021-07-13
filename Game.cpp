@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Network.h"
 #include "Util.h"
 
 Game::Game(int gameMode, int connectMode)

@@ -100,7 +100,7 @@ void Server::waitForConnection()
 int Server::recieveData(char * buffer, int length) 
 {
     int recvLength = 0;
-    while (recvLength < DEFAULT_BUFLEN)
+    while (recvLength < length)
     {
         int iResult = recv(m_clientSocket, buffer, length, 0);
         if (iResult > 0) {

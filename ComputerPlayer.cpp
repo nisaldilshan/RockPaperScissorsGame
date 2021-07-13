@@ -5,10 +5,6 @@ ComputerPlayer::ComputerPlayer(/* args */)
 {
 }
 
-ComputerPlayer::~ComputerPlayer()
-{
-}
-
 Gesture ComputerPlayer::getInput() 
 {
     std::random_device dev;
