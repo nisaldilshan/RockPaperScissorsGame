@@ -46,7 +46,7 @@ std::string Util::getUserIPAddress()
     {
         std::cout << "Enter IP address : "; 
         std::cin >> ipAddress;
-        std::cout << "Entered IP address is: " << ipAddress <<std::endl; 
+        Util::Log("Entered IP address is: " + ipAddress); 
     }
 
     return ipAddress;
