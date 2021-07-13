@@ -27,7 +27,6 @@ public:
 private:
     virtual Gesture getInput() = 0;
     virtual bool getPlayAgainInput() = 0;
-    void processInput(Gesture input);
 };
 
 class ComputerPlayer :public Player

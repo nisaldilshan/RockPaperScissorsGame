@@ -16,4 +16,6 @@ std::string alignString( Position pos, std::string s, int linelength );
 
 std::string getUserIPAddress();
 
+std::string getGestureString(int gesture);
+
 }

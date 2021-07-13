@@ -99,6 +99,7 @@ void Game::endGameHost()
 
 void Game::applyGameLogicJoiner(ScoreEntry& se) 
 {
+    //send player input
     Client& networkClient = Client::get();
     NetworkMessage inputMsg;
     inputMsg.type = MessageType::PlayerInput;
@@ -116,7 +117,7 @@ void Game::applyGameLogicJoiner(ScoreEntry& se)
         Util::Error("Expected Ack message");
 
     //////////////////////////////////////////////////////////////
-
+    //send playAgain input
     m_running = player1->wantToPlayAgain();
     NetworkMessage playAgainInputMsg;
     playAgainInputMsg.type = MessageType::PlayerPlayAgainInput;
@@ -184,20 +185,35 @@ std::pair<std::string, std::string> Game::getMatchSummary()
     int round = 1;
     std::stringstream ss1;
     std::stringstream ss2;
+    std::string header(Util::LINELENGTH, '=' );
+    size_t pOneScore = 0;
+    size_t pTwoScore = 0;
+
+    ss1 << header << std::endl << alignString( Util::Position::CENTRE, "Game Summary", Util::LINELENGTH ) << std::endl << header << std::endl;
+    ss2 << header << std::endl << alignString( Util::Position::CENTRE, "Game Summary", Util::LINELENGTH ) << std::endl << header << std::endl;
+
+    ss1 << "\t\t" << "You" << "\t\t" << "Opponent" << "\t" << "Winner" << std::endl;
+    ss2 << "\t\t" << "You" << "\t\t" << "Opponent" << "\t" << "Winner" << std::endl;
     for (auto score : m_scores)
     {
-        ss1 << "Round" << round << " : ";
-        ss2 << "Round" << round << " : ";
+        ss1 << "Round" << round << "\t\t";
+        ss2 << "Round" << round << "\t\t";
         round++;
+
+        ss1 << Util::getGestureString((int)score.playerOneInput) << "\t\t" << Util::getGestureString((int)score.playerTwoInput) << "\t\t";
+        ss2 << Util::getGestureString((int)score.playerOneInput) << "\t\t" << Util::getGestureString((int)score.playerTwoInput) << "\t\t";
+
         if (score.res == RoundResult::PlayerOneWins)
         {
             ss1 << "You";
-            ss2 << "Other Player";
+            ss2 << "Opponent";
+            pOneScore++;
         } 
         else if (score.res == RoundResult::PlayerTwoWins)
         {
-            ss1 << "Other Player";
+            ss1 << "Opponent";
             ss2 << "You";
+            pTwoScore++;
         }
         else 
         {
@@ -208,6 +224,24 @@ std::pair<std::string, std::string> Game::getMatchSummary()
         ss1 << std::endl;
         ss2 << std::endl;
     }
+
+    if (pOneScore > pTwoScore)
+    {
+        ss1 << header << std::endl << alignString( Util::Position::CENTRE, "You Won", Util::LINELENGTH ) << std::endl << header << std::endl;
+        ss2 << header << std::endl << alignString( Util::Position::CENTRE, "You Lost", Util::LINELENGTH ) << std::endl << header << std::endl;
+    }
+    else if (pOneScore < pTwoScore)
+    {
+        ss1 << header << std::endl << alignString( Util::Position::CENTRE, "You Lost", Util::LINELENGTH ) << std::endl << header << std::endl;
+        ss2 << header << std::endl << alignString( Util::Position::CENTRE, "You Won", Util::LINELENGTH ) << std::endl << header << std::endl;
+    }
+    else
+    {
+        ss1 << header << std::endl << alignString( Util::Position::CENTRE, "It's a Draw", Util::LINELENGTH ) << std::endl << header << std::endl;
+        ss2 << header << std::endl << alignString( Util::Position::CENTRE, "It's a Draw", Util::LINELENGTH ) << std::endl << header << std::endl;
+    }
+    
+
     return {ss1.str(), ss2.str()};
 }
 

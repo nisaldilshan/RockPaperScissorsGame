@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 2048
 
 constexpr char* DEFAULT_PORT = "27015";
 constexpr char* DEFAULT_IP = "127.0.0.1";

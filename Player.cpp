@@ -10,10 +10,3 @@ bool Player::wantToPlayAgain()
     return getPlayAgainInput();
 }
 
-void Player::processInput(Gesture input) 
-{
-    
-}
-
-
-

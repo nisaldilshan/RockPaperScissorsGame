@@ -5,7 +5,7 @@
 
 void Util::Log(const std::string&& logString) 
 {
-#ifdef DEBUG_LOG
+#ifndef DISABLE_DEBUG_LOG
     std::cout << "LOG:" << logString << std::endl;
 #endif
 }
@@ -50,4 +50,17 @@ std::string Util::getUserIPAddress()
     }
 
     return ipAddress;
+}
+
+
+std::string Util::getGestureString(int gesture) 
+{
+    if (gesture == 1)
+        return std::string("Rock");
+    if (gesture == 2)
+        return std::string("Paper");
+    if (gesture == 3)
+        return std::string("Scissor");
+    else
+        return std::string("None");
 }
