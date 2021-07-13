@@ -93,8 +93,8 @@ void Game::endGameHost()
     auto summary = getMatchSummary();
 
     // send summary to both players
-    player1->announceSummary(summary);
-    player2->announceSummary(summary);
+    player1->announceSummary(summary.first);
+    player2->announceSummary(summary.second);
 }
 
 void Game::applyGameLogicJoiner(ScoreEntry& se) 
@@ -179,14 +179,35 @@ void Game::endGameJoiner()
     player1->announceSummary(summary);
 }
 
-std::string Game::getMatchSummary() 
+std::pair<std::string, std::string> Game::getMatchSummary() 
 {
     int round = 1;
-    std::stringstream ss;
+    std::stringstream ss1;
+    std::stringstream ss2;
     for (auto score : m_scores)
     {
-        ss << "Round" << round++ << " : " << (score.res == RoundResult::Draw ? "Draw" : score.res == RoundResult::PlayerOneWins ? "PlayerOneWins" : "PlayerTwoWins") << std::endl;
+        ss1 << "Round" << round << " : ";
+        ss2 << "Round" << round << " : ";
+        round++;
+        if (score.res == RoundResult::PlayerOneWins)
+        {
+            ss1 << "You";
+            ss2 << "Other Player";
+        } 
+        else if (score.res == RoundResult::PlayerTwoWins)
+        {
+            ss1 << "Other Player";
+            ss2 << "You";
+        }
+        else 
+        {
+            ss1 << "Draw";
+            ss2 << "Draw";
+        }
+
+        ss1 << std::endl;
+        ss2 << std::endl;
     }
-    return ss.str();
+    return {ss1.str(), ss2.str()};
 }
 

@@ -54,6 +54,7 @@ private:
     virtual bool getPlayAgainInput() override;
     std::function<Gesture()> m_getInputFunc;
     std::function<bool()> m_getPlayAgainInputFunc;
-    std::function<void(RoundResult, bool)> m_announceWinnerFunc;
+    std::function<void(RoundResult, bool, bool)> m_announceWinnerFunc;
     std::function<void(std::string)> m_announceSummaryFunc;
+    bool m_isHostSidePlayer = true;
 };

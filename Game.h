@@ -30,7 +30,7 @@ private:
     void endGameHost();
     void applyGameLogicJoiner(ScoreEntry& se);
     void endGameJoiner();
-    std::string getMatchSummary();
+    std::pair<std::string, std::string> getMatchSummary();
     std::unique_ptr<Player> player1;
     std::unique_ptr<Player> player2;
     bool m_running = true;
